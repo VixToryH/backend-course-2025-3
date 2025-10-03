@@ -5,13 +5,13 @@ program
   .requiredOption('-i, --input <path>', 'шлях до вхідного файлу')
   .option('-o, --output <path>', 'шлях до вихідного файлу')
   .option('-d, --display', 'вивести результат у консоль')
-  // Додаткові параметри для Варіанту 4
+  // Додаткові параметри для варіанту 4
   .option('-v, --variety', 'відображати вид квітки (поле variety)')
   .option('-l, --length <number>', 'відображати лише записи з довжиною пелюстки більшою за задану');
 
-program.parse(process.argv); //зчитуєм арг. з команд. рядка
+program.parse(process.argv); //зчитує арг. з команд. рядка
 
-const options = program.opts(); //отримуєм всі введені опції
+const options = program.opts(); //отримує всі введені опції
 
 if (!options.input) {
   console.error("Please, specify input file");
@@ -23,7 +23,7 @@ if (!fs.existsSync(options.input)) {
   process.exit(1);
 }
 
-const raw = fs.readFileSync(options.input, 'utf-8'); //читаємо вміст файлу(рядком у форматі UTF-8)
+const raw = fs.readFileSync(options.input, 'utf-8'); //читає вміст файлу(рядком у форматі UTF-8)
 
 //Парсимо файл як JSON-масив або NDJSON
 let records;
@@ -34,7 +34,7 @@ if (raw.trim().startsWith('[')) {
   records = raw
     .trim()
     .split(/\r?\n/)
-    .filter(line => line)      // пропускаємо пусті рядки
+    .filter(line => line) // пропускаємо пусті рядки
     .map(line => JSON.parse(line));
 }
 
@@ -45,12 +45,12 @@ function getValue(obj, path) {
   }
 
   const parts = path.split('.');
-  let cur = obj; // Починаємо з кореневого об'єкта
+  let cur = obj; //Починає з кореневого об'єкта
   for (const p of parts) { //Для кожного елементу p в масиві parts - виконати код у тілі циклу
     if (!cur || !cur.hasOwnProperty(p)) {
       return undefined;
     }
-    cur = cur[p]; // Переходимо до наступного вкладеного об'єкта
+    cur = cur[p];// Перехіод до наступного вкладеного об'єкта
   }
   return cur;
 }
@@ -68,16 +68,16 @@ if (!options.output && !options.display) {
   process.exit(0);
 }
 
-// 7. Формуємо текст з даних
+//Формування текст з даних
 let outLines = records.map(r => {
   const len = getValue(r, "petal.length");
   const wid = getValue(r, "petal.width");
   const variety = getValue(r, "variety");
 
-  // Формуємо рядок залежно від параметрів
+  // Формування рядка залежно від параметрів
   let line = `${len ?? ''} ${wid ?? ''}`;
 
-  // Додаємо variety тільки якщо вказано параметр -v
+  // Додавання variety тільки якщо вказано параметр -v
   if (options.variety && variety) {
     line += ` ${variety}`;
   }
